@@ -58,10 +58,10 @@ int main(int argc, char** argv)
 	{
 		return 1;
 	}
-	if(cCluster[E_ClusterType_C].LoadClusterInfo(servCfg.szaCServClusterCfgFile))
-	{
-		return 1;
-	}
+//	if(cCluster[E_ClusterType_C].LoadClusterInfo(servCfg.szaCServClusterCfgFile))
+//	{
+//		return 1;
+//	}
 
 	TestServ serv(&log, pServNet, cCluster, &servCfg);
 	if(pServNet->StartThread())

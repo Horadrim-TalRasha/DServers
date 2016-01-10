@@ -262,14 +262,33 @@ int LcEpollNet::BindAndLsn(const int& iBackLog, const unsigned short& usPort)
 
 int LcEpollNet::StartThread()
 {
-	pthread_t posix_thrd;
 	pthread_t heartbeat_thrd;
-	int ret = pthread_create(&posix_thrd, NULL, Thread_NetServ, this);
-	if(ret)
-	{
-		m_txlNetLog->Write("pthread_create Thread_NetServ error!");
-		return -1;
-	}
+    int ret = 0;
+
+
+    pthread_t posix_thrd;
+    ret = pthread_create(&posix_thrd, NULL, Thread_NetServ, this);
+   	if(ret)
+   	{
+	    m_txlNetLog->Write("pthread_create Thread_NetServ error!");
+    	return -1;
+   	}
+
+    pthread_t posix_thrd_1;
+    ret = pthread_create(&posix_thrd_1, NULL, Thread_NetServ, this);
+   	if(ret)
+   	{
+	    m_txlNetLog->Write("pthread_create Thread_NetServ error!");
+    	return -1;
+   	}
+
+    pthread_t posix_thrd_2;
+    ret = pthread_create(&posix_thrd_2, NULL, Thread_NetServ, this);
+   	if(ret)
+   	{
+	    m_txlNetLog->Write("pthread_create Thread_NetServ error!");
+    	return -1;
+   	}
 
 	ret = pthread_create(&heartbeat_thrd, NULL, Thread_HeartBeat, this);
 	if(ret)
@@ -287,6 +306,7 @@ void* LcEpollNet::Thread_NetServ(void* param)
 	sockaddr_in cliSockAddr;
 	socklen_t addrLen = sizeof(sockaddr);
 
+    pNet->m_txlNetLog->Write("Thread %llu was created.", pthread_self());
 	while(1)
 	{
 		int nfds = epoll_wait(pNet->m_epSocket, pNet->m_pEpollEvs, pNet->m_pBaseConfig->m_uiConcurrentNum, -1);
@@ -300,6 +320,7 @@ void* LcEpollNet::Thread_NetServ(void* param)
 			return NULL;
 		}
 
+        pNet->m_txlNetLog->Write("Thread %llu was awakened.", pthread_self());
 		for(int i = 0; i < nfds; i++)
 		{
 			if(pNet->m_pEpollEvs[i].data.fd == pNet->m_lsnSocket)
